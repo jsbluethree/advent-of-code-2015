@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace advent_of_code
 {
@@ -11,9 +12,40 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day7();
+            Day8();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
+        }
+
+        static void Day8()
+        {
+            Console.WriteLine("Day 8:");
+            int full = 0, shortened = 0, lengthened = 0;
+            foreach (var line in File.ReadLines("input8.txt"))
+            {
+                full += line.Length;
+                lengthened += line.Length + 2;
+                for (int i = 1; i < line.Length - 1; ++i)
+                {
+                    if (line[i] == '\\')
+                    {
+                        if (line[i + 1] == 'x')
+                            i += 3;
+                        else
+                            i += 1;
+                    }
+                    ++shortened;
+                }
+                for (int i = 0; i < line.Length; ++i)
+                {
+                    if (line[i] == '\\' || line[i] == '"')
+                    {
+                        ++lengthened;
+                    }
+                }
+            }
+            Console.WriteLine("Part 1: {0}", full - shortened);
+            Console.WriteLine("Part 2: {0}", lengthened - full);
         }
 
         static void Day7()
@@ -116,20 +148,16 @@ namespace advent_of_code
                 {
                     coords1 = words[1].Split(',');
                     coords2 = words[3].Split(',');
-                    x1 = int.Parse(coords1[0]);
-                    y1 = int.Parse(coords1[1]);
-                    x2 = int.Parse(coords2[0]);
-                    y2 = int.Parse(coords2[1]);
                 }
                 else
                 {
                     coords1 = words[2].Split(',');
                     coords2 = words[4].Split(',');
-                    x1 = int.Parse(coords1[0]);
-                    y1 = int.Parse(coords1[1]);
-                    x2 = int.Parse(coords2[0]);
-                    y2 = int.Parse(coords2[1]);
                 }
+                x1 = int.Parse(coords1[0]);
+                y1 = int.Parse(coords1[1]);
+                x2 = int.Parse(coords2[0]);
+                y2 = int.Parse(coords2[1]);
                 for (int i = x1; i <= x2; ++i)
                 {
                     for (int j = y1; j <= y2; ++j)
