@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace advent_of_code
 {
@@ -24,7 +23,6 @@ namespace advent_of_code
             foreach (var line in File.ReadLines("input8.txt"))
             {
                 full += line.Length;
-                lengthened += line.Length + 2;
                 for (int i = 1; i < line.Length - 1; ++i)
                 {
                     if (line[i] == '\\')
@@ -36,13 +34,7 @@ namespace advent_of_code
                     }
                     ++shortened;
                 }
-                for (int i = 0; i < line.Length; ++i)
-                {
-                    if (line[i] == '\\' || line[i] == '"')
-                    {
-                        ++lengthened;
-                    }
-                }
+                lengthened += line.Length + 2 + line.Count(a => a == '\\' || a == '"');
             }
             Console.WriteLine("Part 1: {0}", full - shortened);
             Console.WriteLine("Part 2: {0}", lengthened - full);
