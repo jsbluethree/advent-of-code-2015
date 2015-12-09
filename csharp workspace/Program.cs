@@ -11,9 +11,55 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day8();
+            Day9();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
+        }
+
+        static void Day9()
+        {
+            Console.WriteLine("Day 9:");
+            var distances = new Dictionary<string, Dictionary<string, int>>();
+            var alldists = new List<int>();
+            var paths =
+                from line in File.ReadLines("input9.txt")
+                let words = line.Split(' ')
+                select new { places = new[] { words[0], words[2] }, dist = int.Parse(words[4]) };
+            foreach (var path in paths)
+            {
+                if (!distances.ContainsKey(path.places[0])) distances.Add(path.places[0], new Dictionary<string, int>());
+                if (!distances.ContainsKey(path.places[1])) distances.Add(path.places[1], new Dictionary<string, int>());
+                distances[path.places[0]][path.places[1]] = path.dist;
+                distances[path.places[1]][path.places[0]] = path.dist;
+            }
+            foreach (var p1 in distances.Keys)
+            {
+                foreach (var p2 in distances.Keys.Except(new[]{p1}))
+                {
+                    foreach (var p3 in distances.Keys.Except(new[] { p1, p2 }))
+                    {
+                        foreach (var p4 in distances.Keys.Except(new[] { p1, p2, p3 }))
+                        {
+                            foreach (var p5 in distances.Keys.Except(new[] { p1, p2, p3, p4 }))
+                            {
+                                foreach (var p6 in distances.Keys.Except(new[] { p1, p2, p3, p4, p5 }))
+                                {
+                                    foreach (var p7 in distances.Keys.Except(new[] { p1, p2, p3, p4, p5, p6 }))
+                                    {
+                                        foreach (var p8 in distances.Keys.Except(new[] { p1, p2, p3, p4, p5, p6, p7 }))
+                                        {
+                                            alldists.Add(distances[p1][p2] + distances[p2][p3] + distances[p3][p4]
+                                                + distances[p4][p5] + distances[p5][p6] + distances[p6][p7] + distances[p7][p8]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("Part 1: {0}", alldists.Min());
+            Console.WriteLine("Part 2: {0}", alldists.Max());
         }
 
         static void Day8()
