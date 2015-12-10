@@ -11,9 +11,39 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day9();
+            Day10();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
+        }
+
+        static void Day10()
+        {
+            Console.WriteLine("Day 10:");
+            var las = "1113222113";
+            for (int i = 0; i < 40; ++i)
+            {
+                las = LookAndSay(las);
+            }
+            Console.WriteLine("Part 1: {0}", las.Length);
+            for (int i = 0; i < 10; ++i)
+            {
+                las = LookAndSay(las);
+            }
+            Console.WriteLine("Part 2: {0}", las.Length);
+        }
+
+        static string LookAndSay(string s)
+        {
+            var rest = s;
+            var sb = new StringBuilder();
+            while (rest.Length > 0)
+            {
+                var run = rest.TakeWhile(a => a == rest.First());
+                sb.Append(run.Count().ToString());
+                sb.Append(run.First().ToString());
+                rest = rest.Substring(run.Count());
+            }
+            return sb.ToString();
         }
 
         static void Day9()
