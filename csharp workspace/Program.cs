@@ -34,15 +34,22 @@ namespace advent_of_code
 
         static string LookAndSay(string s)
         {
-            var rest = s;
             var sb = new StringBuilder();
-            while (rest.Length > 0)
+            var curr = s[0];
+            var count = 1;
+            for (int i = 1; i < s.Length; ++i)
             {
-                var run = rest.TakeWhile(a => a == rest.First());
-                sb.Append(run.Count().ToString());
-                sb.Append(run.First().ToString());
-                rest = rest.Substring(run.Count());
+                if (s[i] == curr) ++count;
+                else
+                {
+                    sb.Append(count.ToString());
+                    sb.Append(curr);
+                    curr = s[i];
+                    count = 1;
+                }
             }
+            sb.Append(count.ToString());
+            sb.Append(curr);
             return sb.ToString();
         }
 
