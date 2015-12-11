@@ -11,9 +11,65 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day10();
+            Day11();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
+        }
+
+        static void Day11()
+        {
+            Console.WriteLine("Day 11:");
+            var input = "cqjxjnds".ToList();
+            int part = 1;
+            while (true)
+            {
+                if (HasTwoDoublets(input) && HasStraight(input) && !input.Any(a => a == 'i' || a == 'o' || a == 'l'))
+                {
+                    Console.WriteLine("Part {0}: {1}", part, new string(input.ToArray()));
+                    ++part;
+                    if (part > 2) break;
+                }
+                var incpos = 7;
+                while (true)
+                {
+                    if (input[incpos] == 'z')
+                    {
+                        input[incpos] = 'a';
+                        --incpos;
+                    }
+                    else
+                    {
+                        ++input[incpos];
+                        break;
+                    }
+                }
+            }
+        }
+
+        static bool HasTwoDoublets(List<char> s)
+        {
+            var pairs = new List<string>();
+            for (int i = 0; i < s.Count - 1; ++i)
+            {
+                pairs.Add(new string(new[] { s[i], s[i + 1] }));
+            }
+            for (int i = 0; i < pairs.Count; ++i)
+            {
+                if (pairs[i][0] == pairs[i][1] && pairs.Skip(i + 2).Any(a => a[0] == a[1]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        static bool HasStraight(List<char> s)
+        {
+            var trips = new List<string>();
+            for (int i = 0; i < s.Count - 2; ++i){
+                trips.Add(new string(new[] { s[i], s[i + 1], s[i + 2] }));
+            }
+            return trips.Any(a => a[0] + 1 == a[1] && a[1] + 1 == a[2]);
         }
 
         static void Day10()
