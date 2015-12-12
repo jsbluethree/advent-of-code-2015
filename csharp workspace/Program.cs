@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
+using MiniJSON;
 
 namespace advent_of_code
 {
@@ -11,10 +12,82 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day11();
+            Day12();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
         }
+
+        static void Day12()
+        {
+            Console.WriteLine("Day 12:");
+
+            var jobj = Json.Deserialize(File.ReadAllText("input12.json"));
+            
+            Console.WriteLine("Part 1: {0}", Sum(jobj));
+            Console.WriteLine("Part 2: {0}", SumWithoutRed(jobj));
+        }
+
+        static double SumWithoutRed(object jo)
+        {
+            if (jo is Dictionary<string, object>)
+            {
+                var s = 0.0;
+                if ((jo as Dictionary<string, object>).Values.Contains("red")) return 0;
+                    foreach (var val in (jo as Dictionary<string, object>))
+                    {
+                        s += SumWithoutRed(val.Value);
+                    }
+                return s;
+            }
+            else if (jo is List<object>)
+            {
+                var s = 0.0;
+                foreach (var val in (jo as List<object>))
+                {
+                    s += SumWithoutRed(val);
+                }
+                return s;
+            }
+            else if (jo is string)
+            {
+                return 0;
+            }
+            else
+            {
+                return double.Parse(jo.ToString());
+            }
+        }
+
+        static double Sum(object jo)
+        {
+            if (jo is Dictionary<string, object>)
+            {
+                var s = 0.0;
+                foreach (var val in (jo as Dictionary<string, object>).Values)
+                {
+                    s += Sum(val);
+                }
+                return s;
+            }
+            else if (jo is List<object>)
+            {
+                var s = 0.0;
+                foreach (var val in (jo as List<object>))
+                {
+                    s += Sum(val);
+                }
+                return s;
+            }
+            else if (jo is string)
+            {
+                return 0;
+            }
+            else 
+            {
+                return double.Parse(jo.ToString());
+            }
+        }
+
 
         static void Day11()
         {
