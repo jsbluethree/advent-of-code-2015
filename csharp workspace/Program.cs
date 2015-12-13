@@ -12,9 +12,96 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day12();
+            Day13();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
+        }
+
+        static void Day13()
+        {
+            Console.WriteLine("Day 13:");
+            var happy = new Dictionary<string, Dictionary<string, int>>();
+            var allHappiness = new List<int>();
+            foreach (var line in File.ReadLines("input13.txt"))
+            {
+                var words = line.Split(' ', '.');
+                if (!happy.ContainsKey(words[0])){
+                    happy[words[0]] = new Dictionary<string,int>();
+                }
+                happy[words[0]][words[10]] = int.Parse(words[3]) * (words[2] == "gain" ? 1 : -1);
+            }
+            foreach (var p1 in happy.Keys)
+            {
+                foreach (var p2 in happy.Keys.Except(new[] { p1 }))
+                {
+                    foreach (var p3 in happy.Keys.Except(new[] { p1, p2 }))
+                    {
+                        foreach (var p4 in happy.Keys.Except(new[] { p1, p2, p3 }))
+                        {
+                            foreach (var p5 in happy.Keys.Except(new[] { p1, p2, p3, p4 }))
+                            {
+                                foreach (var p6 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5 }))
+                                {
+                                    foreach (var p7 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6 }))
+                                    {
+                                        foreach (var p8 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6, p7 }))
+                                        {
+                                            allHappiness.Add(
+                                                happy[p1][p2] + happy[p1][p8] + happy[p2][p3] + happy[p2][p1] +
+                                                happy[p3][p4] + happy[p3][p2] + happy[p4][p5] + happy[p4][p3] +
+                                                happy[p5][p6] + happy[p5][p4] + happy[p6][p7] + happy[p6][p5] +
+                                                happy[p7][p8] + happy[p7][p6] + happy[p8][p1] + happy[p8][p7]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("Part 1: {0}", allHappiness.Max());
+            allHappiness.Clear();
+            happy["self"] = new Dictionary<string, int>();
+            foreach (var p in happy.Keys.Except(new[] { "self" }))
+            {
+                happy[p]["self"] = 0;
+                happy["self"][p] = 0;
+            }
+
+            foreach (var p1 in happy.Keys)
+            {
+                foreach (var p2 in happy.Keys.Except(new[] { p1 }))
+                {
+                    foreach (var p3 in happy.Keys.Except(new[] { p1, p2 }))
+                    {
+                        foreach (var p4 in happy.Keys.Except(new[] { p1, p2, p3 }))
+                        {
+                            foreach (var p5 in happy.Keys.Except(new[] { p1, p2, p3, p4 }))
+                            {
+                                foreach (var p6 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5 }))
+                                {
+                                    foreach (var p7 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6 }))
+                                    {
+                                        foreach (var p8 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6, p7 }))
+                                        {
+                                            foreach (var p9 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6, p7, p8 }))
+                                            {
+                                                allHappiness.Add(
+                                                happy[p1][p2] + happy[p1][p9] + happy[p2][p3] + happy[p2][p1] +
+                                                happy[p3][p4] + happy[p3][p2] + happy[p4][p5] + happy[p4][p3] +
+                                                happy[p5][p6] + happy[p5][p4] + happy[p6][p7] + happy[p6][p5] +
+                                                happy[p7][p8] + happy[p7][p6] + happy[p8][p9] + happy[p8][p7] +
+                                                happy[p9][p1] + happy[p9][p8]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("Part 2: {0}", allHappiness.Max());
         }
 
         static void Day12()
