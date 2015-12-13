@@ -12,9 +12,22 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day13();
+            permtest();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
+        }
+
+        static void permtest()
+        {
+            var l = new[] { 1, 2, 3 };
+            foreach (var perm in Permutations(l))
+            {
+                foreach (var i in perm)
+                {
+                    Console.Write("{0} ", i);
+                }
+                Console.WriteLine();
+            }
         }
 
         static void Day13()
@@ -30,34 +43,17 @@ namespace advent_of_code
                 }
                 happy[words[0]][words[10]] = int.Parse(words[3]) * (words[2] == "gain" ? 1 : -1);
             }
-            foreach (var p1 in happy.Keys)
+            foreach (var perm in Permutations(happy.Keys))
             {
-                foreach (var p2 in happy.Keys.Except(new[] { p1 }))
+                var hsum = 0;
+                for (int i = 0; i < happy.Count(); ++i)
                 {
-                    foreach (var p3 in happy.Keys.Except(new[] { p1, p2 }))
-                    {
-                        foreach (var p4 in happy.Keys.Except(new[] { p1, p2, p3 }))
-                        {
-                            foreach (var p5 in happy.Keys.Except(new[] { p1, p2, p3, p4 }))
-                            {
-                                foreach (var p6 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5 }))
-                                {
-                                    foreach (var p7 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6 }))
-                                    {
-                                        foreach (var p8 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6, p7 }))
-                                        {
-                                            allHappiness.Add(
-                                                happy[p1][p2] + happy[p1][p8] + happy[p2][p3] + happy[p2][p1] +
-                                                happy[p3][p4] + happy[p3][p2] + happy[p4][p5] + happy[p4][p3] +
-                                                happy[p5][p6] + happy[p5][p4] + happy[p6][p7] + happy[p6][p5] +
-                                                happy[p7][p8] + happy[p7][p6] + happy[p8][p1] + happy[p8][p7]);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    var lneighbor = i == 0 ? happy.Count() - 1 : i - 1;
+                    var rneighbor = i == happy.Count() - 1 ? 0 : i + 1;
+                    hsum += happy[perm.ElementAt(i)][perm.ElementAt(lneighbor)];
+                    hsum += happy[perm.ElementAt(i)][perm.ElementAt(rneighbor)];
                 }
+                allHappiness.Add(hsum);
             }
             Console.WriteLine("Part 1: {0}", allHappiness.Max());
             allHappiness.Clear();
@@ -67,41 +63,35 @@ namespace advent_of_code
                 happy[p]["self"] = 0;
                 happy["self"][p] = 0;
             }
-
-            foreach (var p1 in happy.Keys)
+            foreach (var perm in Permutations(happy.Keys))
             {
-                foreach (var p2 in happy.Keys.Except(new[] { p1 }))
+                var hsum = 0;
+                for (int i = 0; i < happy.Count(); ++i)
                 {
-                    foreach (var p3 in happy.Keys.Except(new[] { p1, p2 }))
+                    var lneighbor = i == 0 ? happy.Count() - 1 : i - 1;
+                    var rneighbor = i == happy.Count() - 1 ? 0 : i + 1;
+                    hsum += happy[perm.ElementAt(i)][perm.ElementAt(lneighbor)];
+                    hsum += happy[perm.ElementAt(i)][perm.ElementAt(rneighbor)];
+                }
+                allHappiness.Add(hsum);
+            }
+            Console.WriteLine("Part 2: {0}", allHappiness.Max());
+        }
+
+        static IEnumerable<IEnumerable<T>> Permutations<T>(IEnumerable<T> list)
+        {
+            if (list.Count() == 1) yield return list;
+            else
+            {
+                foreach (var elem in list)
+                {
+                    var others = Permutations(list.Except(new[] { elem }));
+                    foreach (var other in others)
                     {
-                        foreach (var p4 in happy.Keys.Except(new[] { p1, p2, p3 }))
-                        {
-                            foreach (var p5 in happy.Keys.Except(new[] { p1, p2, p3, p4 }))
-                            {
-                                foreach (var p6 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5 }))
-                                {
-                                    foreach (var p7 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6 }))
-                                    {
-                                        foreach (var p8 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6, p7 }))
-                                        {
-                                            foreach (var p9 in happy.Keys.Except(new[] { p1, p2, p3, p4, p5, p6, p7, p8 }))
-                                            {
-                                                allHappiness.Add(
-                                                happy[p1][p2] + happy[p1][p9] + happy[p2][p3] + happy[p2][p1] +
-                                                happy[p3][p4] + happy[p3][p2] + happy[p4][p5] + happy[p4][p3] +
-                                                happy[p5][p6] + happy[p5][p4] + happy[p6][p7] + happy[p6][p5] +
-                                                happy[p7][p8] + happy[p7][p6] + happy[p8][p9] + happy[p8][p7] +
-                                                happy[p9][p1] + happy[p9][p8]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        yield return other.Union(new[] { elem });
                     }
                 }
             }
-            Console.WriteLine("Part 2: {0}", allHappiness.Max());
         }
 
         static void Day12()
