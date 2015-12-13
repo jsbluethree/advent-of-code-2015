@@ -88,7 +88,7 @@ namespace advent_of_code
                     var others = Permutations(list.Except(new[] { elem }));
                     foreach (var other in others)
                     {
-                        yield return other.Union(new[] { elem });
+                        yield return other.Concat(new[] { elem });
                     }
                 }
             }
