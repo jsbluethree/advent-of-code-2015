@@ -12,22 +12,47 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            permtest();
+            Day14();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();
         }
 
-        static void permtest()
+        static void Day14()
         {
-            var l = new[] { 1, 2, 3 };
-            foreach (var perm in Permutations(l))
-            {
-                foreach (var i in perm)
+            Console.WriteLine("Day 14:");
+            var reindeer =
+                from line in File.ReadLines("input14.txt")
+                let words = line.Split(' ')
+                select new
                 {
-                    Console.Write("{0} ", i);
+                    name = words[0],
+                    speed = int.Parse(words[3]),
+                    flighttime = int.Parse(words[6]),
+                    resttime = int.Parse(words[13])
+                };
+            var distances =
+                from deer in reindeer
+                let totaltime = deer.flighttime + deer.resttime
+                select ((2503 / totaltime) * deer.flighttime + (2503 % totaltime > deer.flighttime ? deer.flighttime : 2503 % totaltime)) * deer.speed;
+            Console.WriteLine("Part 1: {0}", distances.Max());
+            var points = new Dictionary<string, int>();
+            foreach (var deer in reindeer) { points[deer.name] = 0; }
+            for (int i = 1; i < 2503; ++i)
+            {
+                var currdist =
+                    from deer in reindeer
+                    let totaltime = deer.flighttime + deer.resttime
+                    select new { deer, distance = ((i / totaltime) * deer.flighttime + (i % totaltime > deer.flighttime ? deer.flighttime : i % totaltime)) * deer.speed };
+                var front = currdist.Max(a => a.distance);
+                foreach (var deer in currdist) 
+                {
+                    if (deer.distance == front)
+                    {
+                        ++points[deer.deer.name];
+                    }
                 }
-                Console.WriteLine();
             }
+            Console.WriteLine("Part 2: {0}", points.Max(a => a.Value));
         }
 
         static void Day13()
