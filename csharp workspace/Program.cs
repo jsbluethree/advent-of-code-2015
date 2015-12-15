@@ -12,9 +12,80 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day14();
+            Day15();
             Console.WriteLine("Press any key to quit.");
-            Console.ReadKey();
+            Console.ReadKey();  
+        }
+
+        static void Day15()
+        {
+            Console.WriteLine("Day 15:");
+            var ingredients =
+                (from line in File.ReadLines("input15.txt")
+                let words = line.Split(new[] { ' ', ':', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                select new Ingredient() { 
+                    name = words[0],
+                    capacity = int.Parse(words[2]), 
+                    durability = int.Parse(words[4]),
+                    flavor = int.Parse(words[6]),
+                    texture = int.Parse(words[8]),
+                    calories = int.Parse(words[10])
+                }).ToList();
+            var topscore = 0;
+            var setcal = 0;
+            var cookie = new Cookie();
+
+            for (int a = 0; a < 101; ++a)
+            {
+                for (int b = 0; b < 101 - a; ++b)
+                {
+                    for (int c = 0; c < 101 - a - b; ++c)
+                    {
+                        for (int d = 0; d < 101 - a - b - c; ++d)
+                        {
+                            cookie.ingredients[ingredients[0]] = a;
+                            cookie.ingredients[ingredients[1]] = b;
+                            cookie.ingredients[ingredients[2]] = c;
+                            cookie.ingredients[ingredients[3]] = d;
+                            if (cookie.Score > topscore) topscore = cookie.Score;
+                            if (cookie.Calories == 500 && cookie.Score > setcal) setcal = cookie.Score;
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine("Part 1: {0}", topscore);
+            Console.WriteLine("Part 2: {0}", setcal);
+        }
+
+        class Ingredient
+        {
+            public string name;
+            public int capacity, durability, flavor, texture, calories;
+
+            public override bool Equals(object other)
+            {
+                if (other is Ingredient)
+                    return name == (other as Ingredient).name;
+                else return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return name.GetHashCode();
+            }
+        }
+
+        class Cookie
+        {
+            public Dictionary<Ingredient, int> ingredients = new Dictionary<Ingredient, int>();
+
+            public int Capacity { get { return Math.Max(0, ingredients.Sum(a => a.Key.capacity * a.Value)); } }
+            public int Durability { get { return Math.Max(0, ingredients.Sum(a => a.Key.durability * a.Value)); } }
+            public int Flavor { get { return Math.Max(0, ingredients.Sum(a => a.Key.flavor * a.Value)); } }
+            public int Texture { get { return Math.Max(0, ingredients.Sum(a => a.Key.texture * a.Value)); } }
+            public int Calories { get { return ingredients.Sum(a => a.Key.calories * a.Value); } }
+            public int Score { get { return Capacity * Durability * Flavor * Texture; } }
         }
 
         static void Day14()
