@@ -12,9 +12,103 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day15();
+            Day16();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();  
+        }
+
+        static void Day16()
+        {
+            Console.WriteLine("Day 16:");
+            var sues =
+                from line in File.ReadLines("input16.txt")
+                let words = line.Split(new[] { ' ', ':', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                select new Func<Sue>(() =>
+                {
+                    var sue = new Sue { number = int.Parse(words[1]) };
+                    sue.info[words[2]] = int.Parse(words[3]);
+                    sue.info[words[4]] = int.Parse(words[5]);
+                    sue.info[words[6]] = int.Parse(words[7]);
+                    return sue;
+                }
+            )();
+            var testsue = new Sue
+            {
+                number = 0,
+                info = new Dictionary<string, int>
+                {
+                    {"children", 3},
+                    {"cats", 7},
+                    {"samoyeds", 2},
+                    {"pomeranians", 3},
+                    {"akitas", 0},
+                    {"vizslas", 0},
+                    {"goldfish", 5},
+                    {"trees", 3},
+                    {"cars", 2},
+                    {"perfumes", 1}
+                }
+            };
+            var ineligible1 = new List<int>();
+            var ineligible2 = new List<int>();
+            foreach (var sue in sues)
+            {
+                foreach (var key in testsue.info.Keys)
+                {
+                    if (sue.info.ContainsKey(key))
+                    {
+                        if (sue.info[key] != testsue.info[key])
+                        {
+                            ineligible1.Add(sue.number);
+                            break;
+                        }
+                    }
+                }
+                foreach (var key in testsue.info.Keys)
+                {
+                    if (sue.info.ContainsKey(key))
+                    {
+                        if (key == "cats" || key == "trees")
+                        {
+                            if (sue.info[key] <= testsue.info[key])
+                            {
+                                ineligible2.Add(sue.number);
+                                break;
+                            }
+                        }
+                        else if (key == "pomeranians" || key == "goldfish")
+                        {
+                            if (sue.info[key] >= testsue.info[key])
+                            {
+                                ineligible2.Add(sue.number);
+                                break;
+                            } 
+                        }
+                        else
+                        {
+                            if (sue.info[key] != testsue.info[key])
+                            {
+                                ineligible2.Add(sue.number);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            foreach (var sue in sues.Where(a => !ineligible1.Contains(a.number)))
+            {
+                Console.WriteLine("Part 1: {0}", sue.number);
+            }
+            foreach (var sue in sues.Where(a => !ineligible2.Contains(a.number)))
+            {
+                Console.WriteLine("Part 2: {0}", sue.number);
+            }
+        }
+
+        class Sue
+        {
+            public int number;
+            public Dictionary<string, int> info = new Dictionary<string,int>();
         }
 
         static void Day15()
