@@ -12,10 +12,103 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day16();
+            Day18();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();  
         }
+
+        static void Day18()
+        {
+            var grid =
+                (from line in File.ReadLines("input18.txt")
+                select line.ToCharArray()).ToArray();
+            var grid1 = grid;
+            var grid2 = grid;
+            grid2[0][0] = '#';
+            grid2[0][99] = '#';
+            grid2[99][0] = '#';
+            grid2[99][99] = '#';
+            for (int i = 0; i < 100; ++i)
+            {
+                grid1 = GameOfLife(grid1);
+                grid2 = GameOfLife(grid2);
+                grid2[0][0] = '#';
+                grid2[0][99] = '#';
+                grid2[99][0] = '#';
+                grid2[99][99] = '#';
+            }
+            var count1 = 0;
+            var count2 = 0;
+            foreach (var line in grid1){
+                foreach (var c in line)
+                {
+                    if (c == '#')
+                        count1++;
+                }
+            }
+            foreach (var line in grid2)
+            {
+                foreach (var c in line)
+                {
+                    if (c == '#')
+                        count2++;
+                }
+            }
+            Console.WriteLine(count1);
+            Console.WriteLine(count2);
+            
+        }
+
+        static char[][] GameOfLife(char[][] board)
+        {
+            var on = '#';
+            var off = '.';
+
+            var output = new List<string>();
+
+            for (int i = 0; i < board.Length; ++i)
+            {
+                var sb = new StringBuilder();
+                for (int j = 0; j < board[i].Length; ++j)
+                {
+                    var neighbors = 0;
+                    if (i != 0 && j != 0 && board[i - 1][j - 1] == on)
+                        ++neighbors;
+                    if (i != 0 && board[i - 1][j] == on)
+                        ++neighbors;
+                    if (i != 0 && j != board[i].Length - 1 && board[i - 1][j + 1] == on)
+                        ++neighbors;
+                    if (j != board[i].Length - 1 && board[i][j + 1] == on)
+                        ++neighbors;
+                    if (i != board.Length - 1 && j != board[i].Length - 1 && board[i + 1][j + 1] == on)
+                        ++neighbors;
+                    if (i != board.Length - 1 && board[i + 1][j] == on)
+                        ++neighbors;
+                    if (i != board.Length - 1 && j != 0 && board[i + 1][j - 1] == on)
+                        ++neighbors;
+                    if (j != 0 && board[i][j - 1] == on)
+                        ++neighbors;
+                    if (board[i][j] == on)
+                    {
+                        if (neighbors == 2 || neighbors == 3)
+                            sb.Append(on);
+                        else
+                            sb.Append(off);
+                    }
+                    else
+                    {
+                        if (neighbors == 3)
+                            sb.Append(on);
+                        else
+                            sb.Append(off);
+                    }
+                }
+                output.Add(sb.ToString());
+            }
+            return (from line in output select line.ToCharArray()).ToArray();
+        }
+
+        // Day 17 was done in python!
 
         static void Day16()
         {
