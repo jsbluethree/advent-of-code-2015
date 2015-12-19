@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.IO;
 using MiniJSON;
@@ -12,9 +13,43 @@ namespace advent_of_code
     {
         static void Main(string[] args)
         {
-            Day18();
+            Day19();
             Console.WriteLine("Press any key to quit.");
             Console.ReadKey();  
+        }
+
+        static void Day19()
+        {
+            var transforms =
+                from line in File.ReadLines("input19-1.txt")
+                let words = line.Split(' ')
+                select new[] { words[0], words[2] };
+            transforms = transforms.OrderByDescending(a => a[1].Length);
+            var molecule = File.ReadAllText("input19-2.txt");
+            var replaced = new Dictionary<string, bool>();
+            foreach (var t in transforms)
+            {
+                Regex rgx = new Regex(t[0]);
+                var matches = rgx.Matches(molecule);
+                foreach (Match match in matches)
+                {
+                    var tr = rgx.Replace(molecule, t[1], 1, match.Index);
+                    replaced[tr] = true;
+                }
+            }
+            Console.WriteLine("Part 1: {0}", replaced.Keys.Count);
+            var count = 0;
+            var current = molecule;
+            while (current != "e")
+            {
+                foreach (var t in transforms)
+                {
+                    Regex rgx = new Regex(t[1]);
+                    count += rgx.Matches(current).Count;
+                    current = rgx.Replace(current, t[0]);
+                }
+            }
+            Console.WriteLine("Part 2: {0}", count);
         }
 
         static void Day18()
